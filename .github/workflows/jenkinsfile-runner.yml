@@ -31,7 +31,7 @@ permissions:
 jobs:
   jenkins-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,29 +41,50 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Verify Docker engine
-        run: docker info
-
-      - name: Set up Jenkinsfile Runner
-        uses: jenkinsci/jfr-setup-action@master
-        with:
-          jenkins-version: '2.580.2'
-          jenkins-core-url: https://updates.jenkins.io/download/war/2.580.2/jenkins.war
-          jfr-version: 1.0-beta-32
-          jenkins-pm-version: 2.16.0
-          jenkins-pm-url: https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/2.16.0/jenkins-plugin-manager-2.16.0.jar
-          jenkins-jfr-url: https://github.com/jenkinsci/jenkinsfile-runner/releases/download/1.0-beta-32/jenkinsfile-runner-1.0-beta-32.zip
-
-      - name: Use Java 21 for Jenkins execution
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
 
-      - name: Install Jenkins plugins
-        uses: jenkinsci/jfr-plugin-installation-action@master
-        with:
-          pluginstxt: plugins.txt
+      - name: Verify Docker engine
+        run: docker info
+
+      - name: Download Jenkins LTS, Jenkinsfile Runner and plugin manager
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p jenkins/jenkins jenkins/plugins jenkins/jenkinsfile-runner
+          curl --location --fail --retry 3 \
+            https://updates.jenkins.io/download/war/2.580.2/jenkins.war \
+            --output jenkins/jenkins.war
+          unzip -q jenkins/jenkins.war -d jenkins/jenkins
+          curl --location --fail --retry 3 \
+            https://github.com/jenkinsci/jenkinsfile-runner/releases/download/1.0-beta-32/jenkinsfile-runner-1.0-beta-32.zip \
+            --output jenkins/jenkinsfile-runner.zip
+          unzip -q jenkins/jenkinsfile-runner.zip -d jenkins/jenkinsfile-runner
+          chmod +x jenkins/jenkinsfile-runner/bin/jenkinsfile-runner
+          curl --location --fail --retry 3 \
+            https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/2.16.0/jenkins-plugin-manager-2.16.0.jar \
+            --output jenkins/jenkins-plugin-manager.jar
+          mkdir -p jenkins/jenkins/WEB-INF/groovy.init.d jenkins/casc
+          cat > jenkins/jenkins/WEB-INF/groovy.init.d/refresh-update-center.groovy <<'GROOVY'
+          import hudson.model.DownloadService
+          println 'Refreshing Jenkins plugin metadata'
+          for (d in DownloadService.Downloadable.all()) {
+              d.updateNow()
+          }
+          GROOVY
+          echo "JENKINS_ROOT=./jenkins" >> "$GITHUB_ENV"
+
+      - name: Install Jenkins Pipeline and Git plugins
+        shell: bash
+        run: |
+          set -euo pipefail
+          java -jar jenkins/jenkins-plugin-manager.jar \
+            --war jenkins/jenkins.war \
+            --plugin-file plugins.txt \
+            --plugin-download-directory=jenkins/plugins
 
       - name: Execute the repository Jenkinsfile
         uses: jenkinsci/jfr-runtime-action@master
