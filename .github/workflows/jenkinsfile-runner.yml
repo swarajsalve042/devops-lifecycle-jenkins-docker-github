@@ -50,9 +50,11 @@ jobs:
           jenkins-version: '2.580.2'
           jenkins-core-url: https://updates.jenkins.io/download/war/2.580.2/jenkins.war
           jfr-version: 1.0-beta-32
+          jenkins-pm-version: 2.16.0
+          jenkins-pm-url: https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/2.16.0/jenkins-plugin-manager-2.16.0.jar
           jenkins-jfr-url: https://github.com/jenkinsci/jenkinsfile-runner/releases/download/1.0-beta-32/jenkinsfile-runner-1.0-beta-32.zip
 
-      - name: Use Java 17 for Jenkins execution
+      - name: Use Java 21 for Jenkins execution
         uses: actions/setup-java@v4
         with:
           distribution: temurin
