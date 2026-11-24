@@ -1,0 +1,59 @@
+name: Jenkinsfile Runner Pipeline Execution
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Jenkinsfile'
+      - 'plugins.txt'
+      - '.github/workflows/jenkinsfile-runner.yml'
+      - 'server.js'
+      - 'server.test.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'Dockerfile'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Jenkinsfile'
+      - 'plugins.txt'
+      - '.github/workflows/jenkinsfile-runner.yml'
+      - 'server.js'
+      - 'server.test.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'Dockerfile'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  jenkins-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify Docker engine
+        run: docker info
+
+      - name: Set up Jenkinsfile Runner
+        uses: jenkinsci/jfr-setup-action@master
+
+      - name: Install Jenkins plugins
+        uses: jenkinsci/jfr-plugin-installation-action@master
+        with:
+          pluginstxt: plugins.txt
+
+      - name: Execute the repository Jenkinsfile
+        uses: jenkinsci/jfr-runtime-action@master
+        with:
+          command: run
+          jenkinsfile: Jenkinsfile
