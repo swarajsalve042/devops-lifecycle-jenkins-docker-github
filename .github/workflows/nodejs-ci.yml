@@ -1,4 +1,4 @@
-name: Node.js CI Pipeline
+name: Node.js CI and Docker Validation
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Install and Test
+  test-and-docker:
+    name: Node.js tests and Docker runtime
     runs-on: ubuntu-latest
 
     steps:
@@ -26,3 +26,26 @@ jobs:
 
       - name: Run automated tests
         run: npm test
+
+      - name: Build Docker image
+        run: docker build -t devops-lifecycle-demo:ci .
+
+      - name: Run container and verify health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --name devops-lifecycle-demo-ci -p 3000:3000 devops-lifecycle-demo:ci
+          cleanup() {
+            docker logs devops-lifecycle-demo-ci || true
+            docker rm -f devops-lifecycle-demo-ci || true
+          }
+          trap cleanup EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:3000/health; then
+              echo
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Health endpoint did not become ready."
+          exit 1
