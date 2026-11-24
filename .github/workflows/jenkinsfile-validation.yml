@@ -5,12 +5,12 @@ on:
     branches: [main]
     paths:
       - 'Jenkinsfile'
-      - '.github/workflows/jenkinsfile-runner.yml'
+      - '.github/workflows/jenkinsfile-validation.yml'
   pull_request:
     branches: [main]
     paths:
       - 'Jenkinsfile'
-      - '.github/workflows/jenkinsfile-runner.yml'
+      - '.github/workflows/jenkinsfile-validation.yml'
   workflow_dispatch:
 
 permissions:
