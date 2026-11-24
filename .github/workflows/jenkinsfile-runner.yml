@@ -46,6 +46,17 @@ jobs:
 
       - name: Set up Jenkinsfile Runner
         uses: jenkinsci/jfr-setup-action@master
+        with:
+          jenkins-version: '2.492.1'
+          jenkins-core-url: https://updates.jenkins.io/download/war/2.492.1/jenkins.war
+          jfr-version: 1.0-beta-32
+          jenkins-jfr-url: https://github.com/jenkinsci/jenkinsfile-runner/releases/download/1.0-beta-32/jenkinsfile-runner-1.0-beta-32.zip
+
+      - name: Use Java 17 for Jenkins execution
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - name: Install Jenkins plugins
         uses: jenkinsci/jfr-plugin-installation-action@master
