@@ -70,9 +70,9 @@ This is GitHub Actions evidence; execution of the Jenkinsfile on a separate Jenk
 **Security:** Never commit passwords, access keys, tokens, or other secrets to this repository. Store credentials in Jenkins Credentials and reference them from the pipeline.
 
 
-## Latest automated verification (25 November 2026)
+## Latest automated verification (27 November 2026)
 
-- [Node.js tests and Docker validation — successful GitHub Actions run](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45575133965)
-- [Jenkinsfile syntax validation — successful GitHub Actions run](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45362853489)
+- [Node.js tests and Docker validation — successful GitHub Actions run #18](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45950939582)
+- [Jenkinsfile syntax validation — successful GitHub Actions run #2](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45362853489)
 
 These links document automated checks only; they do not imply production deployment or manual end-user acceptance testing.
