@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
     environment {
         IMAGE_NAME = 'devops-lifecycle-demo'
         IMAGE_TAG = "${BUILD_NUMBER}"
@@ -13,9 +18,25 @@ pipeline {
             }
         }
 
+        stage('Agent Preflight') {
+            steps {
+                sh '''
+                    set -eu
+                    command -v node
+                    command -v npm
+                    command -v docker
+                    node --version
+                    npm --version
+                    docker --version
+                    node -e "if (Number(process.versions.node.split('.')[0]) < 20) process.exit(1)"
+                    docker info >/dev/null
+                    echo "Agent preflight passed: Node.js 20+ and Docker daemon are available."
+                '''
+            }
+        }
+
         stage('Install and Test') {
             steps {
-                sh 'node --version'
                 sh 'npm install'
                 sh 'npm test'
             }
