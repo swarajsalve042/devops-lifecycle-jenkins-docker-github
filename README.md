@@ -76,3 +76,7 @@ This is GitHub Actions evidence; execution of the Jenkinsfile on a separate Jenk
 - [Jenkinsfile syntax validation — successful GitHub Actions run #2](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45362853489)
 
 These links document automated checks only; they do not imply production deployment or manual end-user acceptance testing.
+
+## Run the Jenkins pipeline
+
+The Jenkinsfile includes an agent preflight for Node.js 20+, npm, Docker CLI, and Docker daemon access. Follow the [Jenkins execution runbook](JENKINS_RUNBOOK.md) to configure a real Jenkins Pipeline job and capture live build evidence. GitHub Actions syntax validation is not a live Jenkins execution.
