@@ -58,7 +58,7 @@ The Jenkinsfile builds the image locally on the Jenkins agent. It does not push 
 - [Node.js tests and Docker runtime validation](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45362853313) completed successfully.
 - [Jenkinsfile Groovy syntax validation](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45362853489) completed successfully. This validates syntax only; it does not execute a Jenkins pipeline. The run installed dependencies, passed automated tests, built the Docker image, started the container, and verified `/health`.
 
-This is GitHub Actions evidence; execution of the Jenkinsfile on a separate Jenkins controller/agent is not yet claimed.
+A temporary Jenkins controller and Docker-capable agent executed the Jenkinsfile successfully in [ephemeral Jenkins verification](https://github.com/swarajsalve042/devops-lifecycle-jenkins-docker-github/actions/runs/45956953216). This does not represent a persistent, separately hosted Jenkins service.
 
 ## Current scope and next improvements
 
@@ -79,4 +79,4 @@ These links document automated checks only; they do not imply production deploym
 
 ## Run the Jenkins pipeline
 
-The Jenkinsfile includes an agent preflight for Node.js 20+, npm, Docker CLI, and Docker daemon access. Follow the [Jenkins execution runbook](JENKINS_RUNBOOK.md) to configure a real Jenkins Pipeline job and capture live build evidence. GitHub Actions syntax validation is not a live Jenkins execution.
+The Jenkinsfile includes an agent preflight for Node.js 20+, npm, Docker CLI, and Docker daemon access. Follow the [Jenkins execution runbook](JENKINS_RUNBOOK.md) to configure a real Jenkins Pipeline job and capture live build evidence. The ephemeral Jenkins workflow above executes the Jenkinsfile on a temporary Jenkins controller; it does not provision a persistent Jenkins service.
